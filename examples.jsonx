@@ -1,0 +1,151 @@
+std : (
+   acos : x => std.acos(x)
+   read : file => std.read(file)
+   encrypt : { message : ? , key : ? } => ...
+)
+
+true
+2*acos(0) // pi
+read('aes.key') // data as binary blob
+encrypt(), decrypt()
+
+Singleton = Void | Blob | Boolean | String | Integer | Float | Function | Object | List | Set | '(' Any ')' | Expression
+Any = Singleton | Mappings | Sequence
+PathElement = IntegerLiteral | StringLiteral
+AbsolutePath = PathElement | PathElement . Path
+RelativePath = .+ AbsolutePath
+Path = AbsolutePath | RelativePath
+Mapping = AbsolutePath ':' Singleton
+Mappings = eps | Mapping /[,;]?/ Mappings
+Sequence = eps | Singleton /[,;]?/ Sequence
+Object = '{' Mappings '}'
+Set = '{' Sequence '}'
+List = '{' Sequence '}'
+Function = Lambda | Path
+Lambda = Singleton '=>' Any  Ex: x => sin(x)  () => atan(1) (x,y,z) => ... {x,y,z} => 
+Call = Singleton '(' Any ')'
+Blob = { blobs | 0 or more bytes of data }
+Void = { null = Blob(0) }
+Boolean = { true = Blob(-1), false = Blob(0) }
+String = { strings | 0 or more unicode codepoints }
+Integer = { ints | blobs representing 2's compliment values }
+Float = { [mantessa : Integer,base : Intger,exponent : Integer ] }
+Function = { (args) => expression }
+Mapping = { Value : Value }
+Mappings = eps | , | Sequence , Any
+Object = { Sequence }
+List = [ Sequence ]
+LiteralString = NakedString | QuotedString
+NakedString = JavaScriptId
+QuotedString = SingleQuotedString | DoubleQuotedString | InterpolatedString
+
+
+
+
+use(std)
+
+b16('dead.beef')
+
+int(b10('32'))
+b16.decode('dead.beef')
+b64.decode('peas.and.carrots')
+int.decode('dead.beef')
+uint()
+int('32')
+float('32')
+byte_size('apple')
+char_size('apple')
+{ x : 3 , y : 7}.x
+
+
+
+
+
+any
+
+number.mantessa
+number.base
+number.exponent
+
+integer : number { number.exponent => 0 }
+
+number
+|
++-integer
+|
++-float
+|
++-
+array
+
+
+
+
+
+blocks are copy-on-write ref-counted collection
+bytes are a balanced tree of blocks
+strings are utf8 wrappers around bytes
+integers are 2's compliment wrappers around bytes
+numbers are a triplet of integers (m*b**p)
+collection is a map of keys ->  values
+
+
+x.foo()
+
+x : me.x
+y : me.y 
+ii' '
+viii' '
+x' '
+xiv' '
+
+
+.1
+.1.2.3.5
+0.1
+
+[[1,3,]][0,1]
+
+[x,y,z]
+44.5 
+
+json!?
+
+{
+   api :{}
+   false : true
+   "false" : .false 
+   ":" : "false" ."false"
+   defaults : { x : 3, y : 4, z : ..z },
+   y : defaults.y + 1,
+   y!!!! : 77"
+   z : 44
+} == 77
+
+x[=]
+
+base = (x : 3, y : 7, z : 33, 1, 2 , 3)
+
+{
+
+  x : "y" + .y
+  y : .z + 1,
+  z : 3,
+  a.b.c : 3
+  a : { b : { c : 3 }}
+}
+
+{
+   api : (endpoint) => `https://api.com/${endpoint}`
+   x : y,
+   x? : 33,
+   x???!!!! : 7,
+
+}.x == 7
+
+{
+   use std
+   x : 1,
+   pi : 2*atan(1),
+
+}
