@@ -6,7 +6,7 @@
  * @param {ArrayBuffer} buf  – input data
  * @returns {ArrayBuffer}    – 32-byte hash digest
  */
-export default function sha256(buf) {
+export function sha256(buf) {
     const bytes = new Uint8Array(buf);
   
     // --- 1) Pre-processing (padding) ---
@@ -105,7 +105,7 @@ export default function sha256(buf) {
     for (let i = 0; i < 8; i++) {
       outDv.setUint32(i * 4, H[i], false);
     }
-    return out;
+    return new Uint8Array(out);
   }
 
 /**
@@ -113,10 +113,8 @@ export default function sha256(buf) {
  * @param {ArrayBuffer} buffer
  * @returns {string} Hex string (lowercase), two chars per byte
  */
-export default function arrayBufferToHex(buffer) {
+export function arrayBufferToHex(buffer) {
     return Array.from(new Uint8Array(buffer))                  // view bytes  [oai_citation:0‡Stack Overflow](https://stackoverflow.com/questions/40031688/how-can-i-convert-an-arraybuffer-to-a-hexadecimal-string-hex?utm_source=chatgpt.com)
       .map(b => b.toString(16).padStart(2, '0'))                // byte → hex, pad to 2 chars  [oai_citation:1‡Stack Overflow](https://stackoverflow.com/questions/40031688/how-can-i-convert-an-arraybuffer-to-a-hexadecimal-string-hex?utm_source=chatgpt.com)
       .join('');                                                // join into one continuous string
 }
-
-export { sha256, arrayBufferToHex }

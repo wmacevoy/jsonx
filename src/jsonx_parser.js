@@ -3,19 +3,6 @@
 // Usage: import { parseJSONX } from './jsonx_parser.js';
 
 'use strict';
-
-class Tokenizer {
-  constructor(src) {
-    this.src = src;
-    this.pos = 0;
-  }
-  
-
-}
-
-function tokenize(src) {
-
-}
 // Tokenizer: converts source string into token list
 function tokenize(src) {
 
@@ -52,42 +39,6 @@ const AST = {
   unary: (op,arg)=>({type:'UnaryExpression', operator:op, argument:arg}),
 };
 
-class UTF8 {
-  constructor(bytes,begin=null,end=null) {
-    this.bytes = bytes;
-    this.begin = begin == null ? 0 : int(begin);
-    this.end = end == null ? bytes.length : int(end);
-    this.char = 0;
-    this.reset();
-  }
-
-  reset() {
-    this.at = this.begin;
-    while (this.at < this.end && ((this.bytes[at] & 0x80) != 0 ) {
-      ++this.at;
-    }
-    this.char = this.utf8();
-  }
-
-  start() { return this.at == this.begin; }
-  end() { return this.at >= this.end; }
-
-  reject() {
-    if (this.at <= this.begin) return;
-    --this.at;
-    while (this.at >= this.begin && ((this.bytes[at] & 0x80) != 0 ) {
-      --this.at;
-    }
-  }
-
-  accept() {
-    if (this.at >= this.end) return;
-    ++this.at;
-    while (this.at < this.end && ((this.bytes[at] & 0x80) != 0 ) {
-      ++this.at;
-    }
-  }
-}
 
 // LL(1) Parser with operator precedence
 class Parser {

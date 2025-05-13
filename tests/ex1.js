@@ -1,6 +1,7 @@
 export default new class ConstraintEngine {
     constructor() {
-      this.engine = new class {
+      // js64-encoded sha256 hash of ex1.jsonx
+      this.$N5XK6z_AmeOk26IwAyiDDdQ9QwL9JJt$9eTa2e72fG9 = new class {
         constructor() {
           this._space = 100;
           this._time  = 100;
@@ -69,7 +70,7 @@ export default new class ConstraintEngine {
       }();
     }
   
-    get x() { return this.engine.value("x"); }
-    get y() { return this.engine.value("y"); }
-    get z() { return this.engine.value("z"); }
+    get x() { return this.$N5XK6z_AmeOk26IwAyiDDdQ9QwL9JJt$9eTa2e72fG9.value("x"); }
+    get y() { return this.$N5XK6z_AmeOk26IwAyiDDdQ9QwL9JJt$9eTa2e72fG9.value("y"); }
+    get z() { return this.$N5XK6z_AmeOk26IwAyiDDdQ9QwL9JJt$9eTa2e72fG9.value("z"); }
   }();

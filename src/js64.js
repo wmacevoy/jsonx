@@ -9,7 +9,7 @@ let _tebahpla = null;
  * @returns {string}  encoded with 6-bit chunks ↔ js64 alphabet
  */
 export function encode(blob) {
-    const js64len = ((blob.length * 4 + 2) / 3) | 0;
+    const js64len = ((blob.byteLength * 4 + 2) / 3) | 0;
     const js64 = new Array(js64len);
     let code = 0;    // accumulator for bits
     let bits = 6;    // how many bits are in `code` (start with leading 0 -> '$')
