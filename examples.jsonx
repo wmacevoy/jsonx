@@ -1,3 +1,125 @@
+class JsonXLimit ext {
+
+}
+class JsonXSandbox {
+   constuctor() {
+      this._space = null;
+      this._time = null;
+   }
+   get empty() { return (this._space != null && this._space <= 0) || (this._time != null && this._time <= 0)}
+   useTime(required) {
+      if (this._time != null) {
+         if (this_time < required) {
+            throw new JsonXTimeLimitExceeded();
+         } else {
+            this._time = this._time - required;
+         }
+      }
+   }
+   useSpace(required) {
+      if (this._space != null) {
+         if (this_space < required) {
+            throw new JsonXSpaceLimitExceeded();
+         } else {
+            this._space = this._space- required;
+         }
+      }
+   }
+}
+
+class JsonXValue {
+   constructor(sandbox) {
+      this._state = 0;
+      this._value = null;
+      this._sandbox = sandbox;
+   }
+   value() {
+      switch(this._state) {
+         case 0: {
+            this._state = 1;
+            this._value = this._evaluate();
+            this._state = 2;
+            return this._value;
+         }
+         case 1: {
+            throw new JsonXCyclicValue();
+         }
+         case 2: {
+            return this._value;
+         }
+      }
+   }
+   time() { return 1; }
+   space() { return 0; }
+   type() { return "null"; }
+   evaluate() {
+      this._sandbox.useTime(time());
+      this._sandbox.useSpace(space());
+      this._value = null;
+   }
+}
+
+class JsonXValueLiteral extends JsonXValue {
+   constructor(sandbox,literal) {
+      super(sandbox);
+      this._state = 2;
+      this._value = literal;
+   }
+   type() {
+      ... use type of literal
+   }
+}
+
+class JsonXCall {
+   constructor(sandbox,lambda,args) {
+      super(sandbox);
+      this._lambda = lambda;
+      this._args = args;
+   }
+   time() {
+      return this._lambda.time() + 
+   }
+}
+
+class JsonXWrapper {
+   construct(sandbox) {
+      this._sandbox = sandbox;
+      
+      this._y = new JsonXLiteral(3);
+      this._x = new JsonXExpression(this.)
+      
+   }
+
+   get x() {
+      return this._x.value
+   }
+
+}
+
+
+
+
+      if (this._state == 2) {
+         return this._value;
+      }
+   }
+   evaluate(c) {
+      switch(this._state) {
+         case 0: {
+            this._state = 1;
+            this._value = this.evaluate
+         }
+      }
+      if (this._state == 2) {
+         return this._value;
+      }
+
+
+   }
+}
+
+
+
 std : (
    acos : x => std.acos(x)
    read : file => std.read(file)
