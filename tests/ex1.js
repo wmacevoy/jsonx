@@ -1,3 +1,5 @@
+import * as jsonx from 'jsonx';
+
 export default new class ConstraintEngine {
     constructor() {
       // js64-encoded sha256 hash of ex1.jsonx
@@ -11,35 +13,9 @@ export default new class ConstraintEngine {
             ["z", [0, null, () => 3]]
           ]);
         }
+
+
   
-        measure(obj, seen = new Set()) {
-          // Primitives & functions & null/undefined → 1
-          if (obj == null) return 1;
-          const type = typeof obj;
-          if (["number","boolean","symbol","bigint","function"].includes(type)) {
-            return 1;
-          }
-          if (type === "string") {
-            return obj.length;
-          }
-          if (Array.isArray(obj)) {
-            if (seen.has(obj)) return 0;
-            seen.add(obj);
-            return obj.length +
-              obj.reduce((sum, el) => sum + this.measure(el, seen), 0);
-          }
-          if (type === "object") {
-            if (seen.has(obj)) return 0;
-            seen.add(obj);
-            let total = 0;
-            for (const key of Object.keys(obj)) {
-              total += this.measure(key, seen);
-              total += this.measure(obj[key], seen);
-            }
-            return total;
-          }
-          return 1;
-        }
   
         value(path) {
           if (!this._cache.has(path)) {
@@ -59,7 +35,7 @@ export default new class ConstraintEngine {
           this._time--;
           info[0] = 1;
           info[1] = info[2]();
-          const size = this.measure(info[1]);
+          const size = jsonx.measure(info[1]);
           if (this._space < size) {
             throw new Error("Space limit exceeded");
           }

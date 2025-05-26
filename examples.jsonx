@@ -131,35 +131,6 @@ true
 read('aes.key') // data as binary blob
 encrypt(), decrypt()
 
-Singleton = Void | Blob | Boolean | String | Integer | Float | Function | Object | List | Set | '(' Any ')' | Expression
-Any = Singleton | Mappings | Sequence
-PathElement = IntegerLiteral | StringLiteral
-AbsolutePath = PathElement | PathElement . Path
-RelativePath = .+ AbsolutePath
-Path = AbsolutePath | RelativePath
-Mapping = AbsolutePath ':' Singleton
-Mappings = eps | Mapping /[,;]?/ Mappings
-Sequence = eps | Singleton /[,;]?/ Sequence
-Object = '{' Mappings '}'
-Set = '{' Sequence '}'
-List = '{' Sequence '}'
-Function = Lambda | Path
-Lambda = Singleton '=>' Any  Ex: x => sin(x)  () => atan(1) (x,y,z) => ... {x,y,z} => 
-Call = Singleton '(' Any ')'
-Blob = { blobs | 0 or more bytes of data }
-Void = { null = Blob(0) }
-Boolean = { true = Blob(-1), false = Blob(0) }
-String = { strings | 0 or more unicode codepoints }
-Integer = { ints | blobs representing 2's compliment values }
-Float = { [mantessa : Integer,base : Intger,exponent : Integer ] }
-Function = { (args) => expression }
-Mapping = { Value : Value }
-Mappings = eps | , | Sequence , Any
-Object = { Sequence }
-List = [ Sequence ]
-LiteralString = NakedString | QuotedString
-NakedString = JavaScriptId
-QuotedString = SingleQuotedString | DoubleQuotedString | InterpolatedString
 
 
 

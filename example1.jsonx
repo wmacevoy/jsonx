@@ -1,0 +1,38 @@
+
+{   
+    build : "production", 
+    keys : { 
+        production : `$(decrypt(ljfsfjsdljjf,getenv('PRODUCTION_MAIN_KEY'))),
+        test : ...
+    key : .keys[.config]
+}
+    version : "dev",
+    url :  (.version == "dev") ? "https://dev.url" ?
+    read('...') include( )
+    key : `${decrypt('slfjaslkfjadsl;feiofefj')},
+    include("defaults.jsonx")?;
+    "db.exe" : "https://api.com",
+    x : 7,
+    login : `${.sys.api.db$}/login`,
+    login : `${."db.exe"}/login`
+    sys : {
+        api : {
+            db :  `${url}/login`
+        }
+    }
+}
+
+
+
+
+{
+    x : .y,
+    y! : .z + 1,
+    y : 5,
+    z? : 3,
+    /* 
+        /* still a comment */
+    */
+}
+
+

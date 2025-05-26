@@ -1,32 +1,133 @@
 # JSONX: Extended JSON for Configuration and Data
 
-JSONX is a lightweight, declarative configuration language built as a superset of JSON. It empowers JSON with function-based merging, binary blobs, template strings, relative references, lambdas, and more—while remaining familiar and easy to use.
-
+JSONX is a lightweight, declarative configuration language built as a superset of JSON.
 ---
 
 ## Key Features
 
-* **JSON-compatible**: Valid JSON is valid JSONX; comments and trailing commas are allowed.
-* **Function-based merging**: `include(path)` pulls in and merges another JSONX object—no spread operator needed.
-* **Blob literals**: `b16'…'` for hex, `b64'…'` for Base64 binary data.
-* **Built-in functions**: `include()`, `getenv()`, `decrypt()`, `json()`, `str()`, `utf8enc()`, `utf8dec()`, `b64enc()`, `b64dec()`, `b16enc()`, `b16dec()`, `encode()`, `decode()`.
-* **Template strings**: Backtick-quoted strings with `${…}` interpolation.
-* **Relative references**:  `.` for current, `..` for parent, `...` for grandparent contexts.
-* **Lambdas**: Inline functions `(x,y) => expr` for dynamic values.
-* **Arbitrary-precision numbers**: BigInt (`n` suffix) and floats with exponent.
+* **JSON-compatible**: Valid JSON is valid JSONX; comments (`#`, `//`, and nested `/*` ... `*/`) and trailing commas are allowed.
 
+* **DRY**:
+```javascript
+{
+  api : { 
+    url: `https://api.com/v${..version.string}`,
+   },
+  version : {
+    major: 1, minor: 2, revision: 3, 
+    string : `${.major}.${.minor}.${.revision}`,
+  },
+}
+```
+Don't-repeat-yourself! This reduces copy-paste errors and merge conflicts. 
+
+* **Lambdas**:
+```javascript
+{
+  api: endpoint => `https://example.com/v1/${endpoint}`,
+  login: .api(login),
+  users: .api(users),
+}
+```
+Lambda's give you a little more DRY.
+
+The root context `.*` has some handy lambdas:
+
+ * `use` include some context in another.
+ * `read_blob` read a file as a binary blob.
+ * `read_utf8` read a utf8-encoded file as a string.
+ * `js64_encode` encode a blob as a a string using js64.
+ * `js64_decode` decode a js64 string into a binary blob.
+ * `sha256_hash` compute 32 byte binary blob hash of binary blob input.
+ * `sha256_encrypt` encrypt using sha256-ctr mode.
+ * `sha256_decrypt` decrypt using sha256-ctr mode.
+
+* **Key-friendly**
+```javascript
+{
+  decrypt: cipher => 
+    .*utf8_decode
+    .*sha256_decrypt
+    .*js64_decode
+    .cipher,
+  
+  encrypt: plain => 
+    .*js64_encode
+    .*sha256_encrypt
+    .*utf8_encode
+    .plain,
+
+  key: .decrypt $sjnvh8493hiunvjkvnrjk,
+  encrypt_key: .encrypt read_utf8(`${getenv(HOME)}/.'private/key.dat'),
+}
+```
+Your encrypted keys can be in version control. 
+
+* **Binary Blobs**:
+```javascript
+{
+  favicon: .*read 'favicon.ico',
+}
+```
+
+* ** Use defaults? and imperatives!**:
+```javascript
+{
+  .*use? 'default.jsonx', /* weaker */
+  .*use! 'imperative.jsonx', /* stronger */
+}
+```
+? weakens an assignment. ! strengthens.  Last strongest assignment wins.
+
+* **Arbitrary-precision integers**: 
+{
+  .factorial: 
+    k => 1 if .k <= 1 
+         else .k*(..factorial (.k-1)),
+  cards: 52,
+  decks: .factorial .cards,
+}
+
+* **Lazy Sandbox**:
+Evaluates only parts required, so unused configuration can be missing. Evaluation can be computationally bounded so configuration from untrusted sources can be safely done.
+
+```javascript
+{
+  configuration: {
+    type: .*getenv CONFIGURATION,
+    testing: .type == testing,
+    release: .type == release,
+    ok: .testing || .release
+  },
+
+  db : {
+     keys {
+       testing: .*utf8 .*decrypt { 
+         blob: .*js64 $ksks, 
+         key: .*js64 .*getenv TEST_MAIN_KEY,
+       },
+       release: .*utf8 .*decrypt {
+         blob: .*js64 $uuvm,
+         key: .*js64 .*getenv RELEASE_MAIN_KEY,
+       },
+     },
+     key: .keys[..configuration.type],
+  }
+}
+```
+If you only ask for jx.key - you will only need the 
 ---
 
 ## Syntax Overview
 
-```jx
+```javascript
 {
   // Merge in defaults from another file
   include("defaults.jx"),
 
   // Environment and overrides
   port: getenv("PORT") || 8080,
-  secret: decrypt(include("secret.b64")),
+  secret: sha256_decrypt(include("secret.b64")),
 
   // Binary blobs
   logo: b64'R0lGODlhAQABAIAAAAUEBA==' ,  // tiny GIF
